@@ -10,11 +10,20 @@ class App extends Component {
       user: null
     }
   }
+  componentDidMount() {
+    auth.doOnStateChange((user) => {
+      if (user) {
+        this.setState({ user });
+      } 
+    });
+  }
   login() {
     auth.doSignIn()
       .then((result) => {
         const user = result.user;
-        this.setState({user});
+        this.setState({user}, () => {
+          console.log(this.state.user);
+        });
       });
   }
   logout() {
@@ -30,6 +39,10 @@ class App extends Component {
         {this.state.user ?  <h1>Logout </h1> : <h1>Login</h1> }
        
         {this.state.user ? <button onClick={this.logout.bind(this)}>Log Out</button> : <button onClick={this.login.bind(this)}>Log In</button>}
+        {this.state.user ?
+          <div><h2>Your name:{this.state.user.displayName}</h2><br /> <img src={this.state.user.photoURL}/></div>
+          : <div>you must be logged in</div>
+        }
       </div>
     );
   }
